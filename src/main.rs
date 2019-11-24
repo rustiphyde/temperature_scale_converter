@@ -1,7 +1,6 @@
 use std::io;
 
 fn main() {
-
     println!("Which temperature scale are you converting from? Choose F for Fahrenheit, C for Celsius, R for Rankine or K for Kelvin");
 
     let mut scale_from = String::new();
@@ -9,180 +8,188 @@ fn main() {
     let mut scale_to = String::new();
 
     io::stdin()
-    .read_line(&mut scale_from)
-    .expect("Failed to read the line.");
+        .read_line(&mut scale_from)
+        .expect("Failed to read the line.");
+    choose_scale(&scale_from);
 
-    if scale_from.trim().to_lowercase() == "c" {
-
-        println!("What is your temperature in degrees Celsius?");
-
-        io::stdin()
+    io::stdin()
         .read_line(&mut temp)
         .expect("Failed to read the line.");
 
-        let temp: f64 = temp.trim().parse().expect("Required a number");
+    let temp: f64 = temp.trim().parse().expect("Required a number");
 
-        println!("Which temperature scale are you trying to convert to?");
+    println!("Which temperature scale are you trying to convert to?");
 
-        io::stdin()
+    io::stdin()
         .read_line(&mut scale_to)
         .expect("Failed to read the line.");
 
-        celsius(temp, &scale_to);
-    }
+    use_scale(&scale_from, &scale_to, temp);
+}
 
-    else if scale_from.trim().to_lowercase() == "f" {
+enum Temp {
+    F(f64),
+    C(f64),
+    R(f64),
+    K(f64),
+}
 
-        println!("What is your temperature in degrees Fahrenheit?");
-
-        io::stdin()
-        .read_line(&mut temp)
-        .expect("Failed to read the line.");
-
-        let temp: f64 = temp.trim().parse().expect("Required a number");
-
-        println!("Which temperature scale are you trying to convert to?");
-
-        io::stdin()
-        .read_line(&mut scale_to)
-        .expect("Failed to read the line.");
-        
-       fahrenheit(temp, &scale_to);
-    }
-    else if scale_from.trim().to_lowercase() == "r" {
-
-        println!("What is your temperature in degrees Rankine?");
-
-        io::stdin()
-        .read_line(&mut temp)
-        .expect("Failed to read the line.");
-
-        let temp: f64 = temp.trim().parse().expect("Required a number");
-
-        println!("Which temperature scale are you trying to convert to?");
-
-        io::stdin()
-        .read_line(&mut scale_to)
-        .expect("Failed to read the line.");
-        
-        rankine(temp, &scale_to);
-    }
-    else if scale_from.trim().to_lowercase() == "k" {
-
-        println!("What is your temperature in Kelvin?");
-
-        io::stdin()
-        .read_line(&mut temp)
-        .expect("Failed to read the line.");
-
-        let temp: f64 = temp.trim().parse().expect("Required a number");
-
-        println!("Which temperature scale are you trying to convert to?");
-
-        io::stdin()
-        .read_line(&mut scale_to)
-        .expect("Failed to read the line.");
-        
-        kelvin(temp, &scale_to);
-    }
-    else {
-        println!("That is not a valid scale of temperature measurement.")
+fn convert_celsius(t: &Temp) -> f64 {
+    match t {
+        &Temp::F(deg) => (deg - 32.0) / 1.8,
+        &Temp::R(deg) => (deg + 273.15) * 1.8,
+        &Temp::K(deg) => deg + 273.15,
+        &Temp::C(deg) => deg,
     }
 }
 
-fn celsius(t: f64, s: &str) {
-
-    let s: &str = &s.trim().to_lowercase();
-
-    if s == "f"{
-        let fahren: f64 = t * 1.8 + 32.0;
-    
-        println!("Your converted temperature is {:.2} °F", fahren);
-    }
-    else if s == "r"{
-        let rank: f64 = (t  + 273.15) * 1.8;
-
-        println!("Your converted temperature is {:.2} °R", rank);
-    }
-    else if s == "k"{
-        let kelv: f64 = t + 273.15;
-
-        println!("Your converted temperature is {:.2} K", kelv);
-    }
-    else {
-        println!("That is not a valid scale of temperature measurement");
+fn convert_fahrenheit(t: &Temp) -> f64 {
+    match t {
+        &Temp::F(deg) => deg,
+        &Temp::C(deg) => (deg - 32.0) / 1.8,
+        &Temp::R(deg) => deg + 459.67,
+        &Temp::K(deg) => (deg + 459.67) / 1.8,
     }
 }
 
-fn fahrenheit(t: f64, s: &str) {
-
-    let s: &str = &s.trim().to_lowercase();
-
-    if s == "c"{
-        let cels: f64 = (t - 32.0) / 1.8;
-    
-        println!("Your converted temperature is {:.2} °C", cels);
-    }
-    else if s == "r"{
-        let rank: f64 = t + 459.67;
-
-        println!("Your converted temperature is {:.2} °R", rank);
-    }
-    else if s == "k"{
-        let kelv: f64 = (t + 459.67) / 1.8;
-
-        println!("Your converted temperature is {:.2} K", kelv);
-    }
-    else {
-        println!("That is not a valid scale of temperature measurement");
+fn convert_rankine(t: &Temp) -> f64 {
+    match t {
+        &Temp::F(deg) => deg - 459.67,
+        &Temp::C(deg) => (deg - 491.67) / 1.8,
+        &Temp::R(deg) => deg,
+        &Temp::K(deg) => deg / 1.8,
     }
 }
 
-fn rankine(t: f64, s: &str) {
-
-    let s: &str = &s.trim().to_lowercase();
-
-    if s == "c"{
-        let cels: f64 = (t - 491.67) / 1.8;
-
-        println!("Your converted temperature is {:.2} °C", cels);
-    }
-    else if s == "f"{
-        let fahren: f64 = t - 459.67;
-
-        println!("Your converted temperature is {:.2} °F", fahren);
-    }
-    else if s == "k"{
-        let kelv: f64 = t / 1.8;
-
-        println!("your converted temperature is {:.2} K", kelv);
-    }
-    else {
-        println!("That is not a valid scale of temperature measurement.");
+fn convert_kelvin(t: &Temp) -> f64 {
+    match t {
+        &Temp::C(deg) => deg - 273.15,
+        &Temp::R(deg) => deg * 1.8,
+        &Temp::F(deg) => (deg * 1.8) - 459.67,
+        &Temp::K(deg) => deg,
     }
 }
 
-fn kelvin(t: f64, s: &str){
+fn print_celsius(t: &Temp) {
+    match t {
+        &Temp::F(deg) => println!("{} °C = {:.2} °F", deg, convert_celsius(t)),
+        &Temp::R(deg) => println!("{} °C = {:.2} °R", deg, convert_celsius(t)),
+        &Temp::K(deg) => println!("{} °C = {:.2} K", deg, convert_celsius(t)),
+        &Temp::C(deg) => println!("{} °C ", deg),
+    };
+}
 
-    let s: &str = &s.trim().to_lowercase();
+fn print_fahrenheit(t: &Temp) {
+    match t {
+        &Temp::F(deg) => println!("{} °F", deg),
+        &Temp::C(deg) => println!("{} °F = {:.2} °C", deg, convert_fahrenheit(t)),
+        &Temp::R(deg) => println!("{} °F = {:.2} °R", deg, convert_fahrenheit(t)),
+        &Temp::K(deg) => println!("{} °F = {:.2} K", deg, convert_fahrenheit(t)),
+    };
+}
 
-    if s == "c"{
-        let cels: f64 = t - 273.15;
+fn print_rankine(t: &Temp) {
+    match t {
+        &Temp::R(deg) => println!("{} °R", deg),
+        &Temp::C(deg) => println!("{} °R = {:.2} °C", deg, convert_rankine(t)),
+        &Temp::F(deg) => println!("{} °R = {:.2} °F", deg, convert_rankine(t)),
+        &Temp::K(deg) => println!("{} °R = {:.2} K", deg, convert_rankine(t)),
+    };
+}
 
-        println!("Your converted temperature is {:.2} °C", cels);
-    }
-    else if s == "f"{
-        let fahren: f64 = (t * 1.8) - 459.67;
+fn print_kelvin(t: &Temp) {
+    match t {
+        &Temp::K(deg) => println!("{} K", deg),
+        &Temp::C(deg) => println!("{} K = {:.2} °C", deg, convert_kelvin(t)),
+        &Temp::R(deg) => println!("{} K = {:.2} °R", deg, convert_kelvin(t)),
+        &Temp::F(deg) => println!("{} K = {:.2} °F", deg, convert_kelvin(t)),
+    };
+}
 
-        println!("Your converted temperature is {:.2} °F", fahren);
-    }
-    else if s == "r"{
-        let rank: f64 = t * 1.8;
+fn celsius_scale(s: &str, t: f64) {
+    let s: &str = &s.trim().to_uppercase();
 
-        println!("Your converted temperature is {:.2} °R", rank)
-    }
-    else {
-        println!("That is not a valid scale of temperature measurement.");
-    }
+    let t: Temp = match s {
+        "F" => Temp::F(t),
+        "R" => Temp::R(t),
+        "K" => Temp::K(t),
+        "C" => Temp::C(t),
+        _ => Temp::C(t),
+    };
 
+    print_celsius(&t);
+}
+
+fn fahrenheit_scale(s: &str, t: f64) {
+    let s: &str = &s.trim().to_uppercase();
+
+    let t: Temp = match s {
+        "F" => Temp::F(t),
+        "R" => Temp::R(t),
+        "K" => Temp::K(t),
+        "C" => Temp::C(t),
+        _ => Temp::F(t),
+    };
+
+    print_fahrenheit(&t);
+}
+
+fn rankine_scale(s: &str, t: f64) {
+    let s: &str = &s.trim().to_uppercase();
+
+    let t: Temp = match s {
+        "F" => Temp::F(t),
+        "R" => Temp::R(t),
+        "K" => Temp::K(t),
+        "C" => Temp::C(t),
+        _ => Temp::R(t),
+    };
+
+    print_rankine(&t);
+}
+
+fn kelvin_scale(s: &str, t: f64) {
+    let s: &str = &s.trim().to_uppercase();
+
+    let t: Temp = match s {
+        "F" => Temp::F(t),
+        "R" => Temp::R(t),
+        "K" => Temp::K(t),
+        "C" => Temp::C(t),
+        _ => Temp::K(t),
+    };
+
+    print_kelvin(&t);
+}
+
+fn choose_scale(s: &str) {
+    let s: &str = &s.trim().to_uppercase();
+
+    let scale = match s {
+        "F" => println!("What is your temperature in degrees Fahrenheit?"),
+        "C" => println!("What is your temperature in degrees Celsius?"),
+        "R" => println!("What is your temperature in degrees Rankine?"),
+        "K" => println!("What is your temperature in Kelvin?"),
+        _ => println!("That is an invalid response"),
+    };
+
+    return scale;
+}
+
+fn invalid() {
+    println!("That is an invalid response.");
+}
+
+fn use_scale(sf: &str, st: &str, t: f64) {
+    let sf: &str = &sf.trim().to_uppercase();
+
+    let convert = match sf {
+        "C" => celsius_scale(st, t),
+        "F" => fahrenheit_scale(st, t),
+        "R" => rankine_scale(st, t),
+        "K" => kelvin_scale(st, t),
+        _ => invalid(),
+    };
+
+    return convert;
 }
