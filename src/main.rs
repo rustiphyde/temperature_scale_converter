@@ -176,10 +176,6 @@ fn choose_scale(s: &str) {
     return scale;
 }
 
-fn invalid() {
-    println!("At some point you entered an invalid response. Please try again, Remember to choose a scale with only F, C, R, or K. Also remember to enter a number when asked for your temperature.");
-}
-
 fn use_scale(sf: &str, st: &str, t: f64) {
     let sf: &str = &sf.trim().to_uppercase();
 
