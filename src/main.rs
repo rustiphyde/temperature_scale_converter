@@ -36,7 +36,7 @@ enum Temp {
 
 fn convert_celsius(t: &Temp) -> f64 {
     match t {
-        &Temp::F(deg) => (deg - 32.0) / 1.8,
+        &Temp::F(deg) => (deg * 1.8) + 32.0,
         &Temp::R(deg) => (deg + 273.15) * 1.8,
         &Temp::K(deg) => deg + 273.15,
         &Temp::C(deg) => deg,
