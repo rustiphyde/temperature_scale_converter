@@ -170,7 +170,7 @@ fn choose_scale(s: &str) {
         "C" => println!("What is your temperature in degrees Celsius?"),
         "R" => println!("What is your temperature in degrees Rankine?"),
         "K" => println!("What is your temperature in Kelvin?"),
-        _ => println!("That is an invalid response"),
+        _ => println!("That is an invalid response, defaulting to Fahrenheit, please enter a number."),
     };
 
     return scale;
