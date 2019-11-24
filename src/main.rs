@@ -170,14 +170,14 @@ fn choose_scale(s: &str) {
         "C" => println!("What is your temperature in degrees Celsius?"),
         "R" => println!("What is your temperature in degrees Rankine?"),
         "K" => println!("What is your temperature in Kelvin?"),
-        _ => println!("That is an invalid response, defaulting to Fahrenheit, please enter a number."),
+        _ => println!("No scale chosen defaulting to Celsius. Please enter a temperature."),
     };
 
     return scale;
 }
 
 fn invalid() {
-    println!("That is an invalid response.");
+    println!("At some point you entered an invalid response. Please try again, Remember to choose a scale with only F, C, R, or K. Also remember to enter a number when asked for your temperature.");
 }
 
 fn use_scale(sf: &str, st: &str, t: f64) {
@@ -188,7 +188,7 @@ fn use_scale(sf: &str, st: &str, t: f64) {
         "F" => fahrenheit_scale(st, t),
         "R" => rankine_scale(st, t),
         "K" => kelvin_scale(st, t),
-        _ => invalid(),
+        _ => celsius_scale(st, t),
     };
 
     return convert;
